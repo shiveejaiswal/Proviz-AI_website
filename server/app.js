@@ -2,10 +2,12 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+require('dotenv').config();  // Import dotenv to load variables from .env file
+
 const app = express();
 
-// MongoDB connection (replace with your actual DB URI)
-mongoose.connect('mongodb+srv://sanjusanjeev2014:63ToV1EyODtoqWmn@cluster0.vi0kv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', { useNewUrlParser: true, useUnifiedTopology: true })
+// MongoDB connection using environment variable
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.log('MongoDB connection error:', err));
 
