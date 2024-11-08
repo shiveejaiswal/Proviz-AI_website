@@ -6,15 +6,45 @@ import { useInView } from 'react-intersection-observer';
 import gsap from 'gsap';
 import { ChevronRight, Users, Trophy, BookOpen } from 'lucide-react';
 
+// Reusable ProgramCard component
+const ProgramCard = ({ title, duration, description, image, index }) => (
+  <motion.div
+    initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
+    animate={{ opacity: 1, x: 0 }}
+    transition={{ duration: 0.5, delay: index * 0.1 }}
+    className="bg-gray-700 rounded-lg overflow-hidden shadow-lg"
+  >
+    <img src={image} alt={title} className="w-full h-48 object-cover" />
+    <div className="p-6">
+      <h3 className="text-2xl font-semibold mb-2 text-white">{title}</h3>
+      <p className="text-gray-300 mb-4">Duration: {duration}</p>
+      <p className="text-gray-400">{description}</p>
+    </div>
+  </motion.div>
+);
+
+// Reusable TestimonialCard component
+const TestimonialCard = ({ name, role, quote, image, index }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 50 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5, delay: index * 0.2 }}
+    className="bg-gray-800 p-6 rounded-lg shadow-lg"
+  >
+    <img src={image} alt={name} className="w-24 h-24 rounded-full mx-auto mb-4" />
+    <h3 className="text-xl font-semibold text-white mb-2">{name}</h3>
+    <p className="text-blue-400 mb-4">{role}</p>
+    <p className="text-gray-300 italic">"{quote}"</p>
+  </motion.div>
+);
+
 const MainSection = () => {
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 500], [0, -150]);
-
   const [ref, inView] = useInView({
     threshold: 0.1,
     triggerOnce: true,
   });
-
   const parallaxRef = useRef(null);
 
   useEffect(() => {
@@ -30,11 +60,13 @@ const MainSection = () => {
 
   return (
     <div className="relative w-full bg-black text-white overflow-hidden">
+      {/* Background Image */}
       <div 
         className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: 'url(/assets/bg.jpg)' }}
       />
       <div className="relative z-10">
+        {/* Parallax Section */}
         <Parallax bgImage="/assets/futuristic-bg.jpg" strength={500}>
           <section className="relative w-full bg-black bg-opacity-60 text-white overflow-hidden">
             <motion.div
@@ -45,8 +77,8 @@ const MainSection = () => {
                 y,
               }}
             />
-
             <div className="relative z-10 flex flex-col items-center justify-center min-h-screen text-center space-y-8 px-6">
+              {/* Main Title */}
               <motion.h1
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -56,6 +88,7 @@ const MainSection = () => {
                 Proviz School of AI
               </motion.h1>
 
+              {/* Main Description */}
               <motion.p
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -65,6 +98,7 @@ const MainSection = () => {
                 Embark on a transformative journey into the world of Artificial Intelligence. Our cutting-edge curriculum and expert instructors will guide you towards becoming a leader in AI innovation.
               </motion.p>
 
+              {/* Apply Button */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.5 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -78,6 +112,7 @@ const MainSection = () => {
               </motion.div>
             </div>
 
+            {/* Section for "Why Choose Proviz?" */}
             <motion.div
               ref={parallaxRef}
               initial={{ opacity: 0, y: 100 }}
@@ -88,7 +123,7 @@ const MainSection = () => {
                   Why Choose Proviz School of AI?
                 </h2>
                 <div className="grid md:grid-cols-3 gap-12 px-6">
-                  {[
+                  {[ 
                     {
                       title: 'Cutting-edge AI Curriculum',
                       image: '/assets/ai-curriculum.jpg',
@@ -121,11 +156,12 @@ const MainSection = () => {
               </div>
             </motion.div>
 
+            {/* Programs Section */}
             <div className="bg-gray-800 py-16">
               <div className="container mx-auto px-6">
                 <h2 className="text-4xl font-semibold mb-8 text-center text-white">Our Programs</h2>
                 <div className="grid md:grid-cols-2 gap-8">
-                  {[
+                  {[ 
                     {
                       title: 'Machine Learning Mastery',
                       duration: '6 months',
@@ -149,115 +185,42 @@ const MainSection = () => {
                       duration: '3 months',
                       description: 'Explore the ethical implications of AI and learn to develop responsible AI systems.',
                       image: '/assets/ai-ethics.jpg'
-                    }
-                  ].map((program, index) => (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.5, delay: index * 0.1 }}
-                      className="bg-gray-700 rounded-lg overflow-hidden shadow-lg"
-                    >
-                      <img src={program.image} alt={program.title} className="w-full h-48 object-cover" />
-                      <div className="p-6">
-                        <h3 className="text-2xl font-semibold mb-2 text-white">{program.title}</h3>
-                        <p className="text-gray-300 mb-4">Duration: {program.duration}</p>
-                        <p className="text-gray-400">{program.description}</p>
-                      </div>
-                    </motion.div>
+                    },
+                  ].map((item, index) => (
+                    <ProgramCard key={index} {...item} index={index} />
                   ))}
                 </div>
               </div>
             </div>
 
+            {/* Testimonials Section */}
             <div className="bg-gray-900 py-16">
-              <div className="container mx-auto px-6">
-                <h2 className="text-4xl font-semibold mb-12 text-center text-white">Our Success Stories</h2>
-                <div className="grid md:grid-cols-3 gap-8">
-                  {[
+              <div className="container mx-auto text-center text-white">
+                <h2 className="text-4xl font-semibold mb-12">What Our Students Say</h2>
+                <div className="grid md:grid-cols-3 gap-8 px-6">
+                  {[ 
                     {
-                      name: 'Sarah Johnson',
-                      role: 'AI Research Scientist at Google',
-                      quote: 'Proviz School of AI provided me with the foundation I needed to excel in my career. The hands-on projects and expert guidance were invaluable.',
-                      image: '/assets/testimonial1.jpg'
+                      name: 'John Doe',
+                      role: 'Software Engineer',
+                      quote: 'Proviz School of AI provided me with the knowledge and skills needed to excel in the AI industry. The hands-on experience was invaluable!',
+                      image: '/assets/john.jpg'
                     },
                     {
-                      name: 'Michael Chen',
-                      role: 'Founder of AI Startup',
-                      quote: 'The entrepreneurship skills I gained alongside AI expertise helped me launch my own successful AI startup. I\'m grateful for the holistic education.',
-                      image: '/assets/testimonial2.jpg'
+                      name: 'Jane Smith',
+                      role: 'Data Scientist',
+                      quote: 'The faculty at Proviz are top-notch! I learned from industry leaders who truly care about student success.',
+                      image: '/assets/jane.jpg'
                     },
                     {
-                      name: 'Emily Rodriguez',
-                      role: 'AI Ethics Consultant',
-                      quote: 'Proviz\'s focus on ethical AI practices set me on a path to make a real difference in how AI is developed and deployed responsibly.',
-                      image: '/assets/testimonial3.jpg'
-                    }
+                      name: 'Alice Johnson',
+                      role: 'AI Researcher',
+                      quote: 'I\'ve never encountered a more comprehensive AI program. Proviz sets you up for success from day one.',
+                      image: '/assets/alice.jpg'
+                    },
                   ].map((testimonial, index) => (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, y: 50 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: index * 0.2 }}
-                      className="bg-gray-800 p-6 rounded-lg shadow-lg"
-                    >
-                      <img src={testimonial.image} alt={testimonial.name} className="w-24 h-24 rounded-full mx-auto mb-4" />
-                      <h3 className="text-xl font-semibold text-white mb-2">{testimonial.name}</h3>
-                      <p className="text-blue-400 mb-4">{testimonial.role}</p>
-                      <p className="text-gray-300 italic">"{testimonial.quote}"</p>
-                    </motion.div>
+                    <TestimonialCard key={index} {...testimonial} index={index} />
                   ))}
                 </div>
-              </div>
-            </div>
-
-            <div className="bg-gray-800 py-16">
-              <div className="container mx-auto px-6">
-                <h2 className="text-4xl font-semibold mb-12 text-center text-white">Key Features</h2>
-                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                  {[
-                    { icon: Users, title: 'Small Class Sizes', description: 'Enjoy personalized attention with our small class sizes, ensuring you get the support you need.' },
-                    { icon: Trophy, title: 'Industry Recognition', description: 'Our programs are recognized and valued by top tech companies worldwide.' },
-                    { icon: BookOpen, title: 'Cutting-edge Curriculum', description: 'Stay ahead with our constantly updated curriculum that reflects the latest in AI technology.' },
-                    { icon: ChevronRight, title: 'Career Support', description: 'Benefit from our career services, including resume workshops, interview prep, and job placement assistance.' },
-                  ].map((feature, index) => (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, y: 50 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: index * 0.1 }}
-                      className="bg-gray-700 p-6 rounded-lg shadow-lg text-center"
-                    >
-                      <feature.icon className="w-12 h-12 text-blue-400 mx-auto mb-4" />
-                      <h3 className="text-xl font-semibold text-white mb-2">{feature.title}</h3>
-                      <p className="text-gray-300">{feature.description}</p>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-gray-900 py-16">
-              <div className="container mx-auto px-6 text-center">
-                <h2 className="text-4xl font-semibold mb-8 text-white">Join the AI Revolution</h2>
-                <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
-                  The field of AI is evolving rapidly, and the demand for skilled professionals is soaring. At Proviz School of AI, we equip you with the knowledge and skills to lead this revolution. Don't miss your chance to be part of the future.
-                </p>
-                <motion.div
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <Link to="/apply">
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="px-8 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
-                    >
-                      Start Your AI Journey
-                    </motion.button>
-                  </Link>
-                </motion.div>
               </div>
             </div>
           </section>

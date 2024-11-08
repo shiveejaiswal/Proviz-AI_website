@@ -2,16 +2,24 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const ApplicationForm = () => {
+  // State to store form input values
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
     email: '',
     statement: '',
   });
+  
+  // State to store any validation errors
   const [errors, setErrors] = useState({});
+  
+  // State to track the form submission status
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // State to toggle the popup after successful submission
   const [showPopup, setShowPopup] = useState(false);
 
+  // Handle form input changes
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -19,6 +27,7 @@ const ApplicationForm = () => {
     });
   };
 
+  // Validate form fields
   const validateForm = () => {
     const newErrors = {};
     if (!formData.name) newErrors.name = 'Name is required';
@@ -26,9 +35,10 @@ const ApplicationForm = () => {
     if (!formData.email) newErrors.email = 'Email is required';
     if (!formData.statement) newErrors.statement = 'Statement is required';
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return Object.keys(newErrors).length === 0;  // Return true if no errors
   };
 
+  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
@@ -40,13 +50,13 @@ const ApplicationForm = () => {
       })
         .then((response) => response.json())
         .then((data) => {
-          setIsSubmitting(false);
-          setShowPopup(true);
-          setFormData({ name: '', phone: '', email: '', statement: '' });
+          setIsSubmitting(false);  // Stop submitting state
+          setShowPopup(true);  // Show success popup
+          setFormData({ name: '', phone: '', email: '', statement: '' });  // Reset form
         })
         .catch((error) => {
           console.error('Error:', error);
-          setIsSubmitting(false);
+          setIsSubmitting(false);  // Stop submitting state on error
         });
     }
   };
@@ -59,13 +69,17 @@ const ApplicationForm = () => {
       className="min-h-screen flex items-center justify-center bg-gray-900 py-12 px-4 sm:px-6 lg:px-8"
     >
       <div className="max-w-md w-full space-y-8">
+        {/* Form Header */}
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
             Apply to Proviz School of AI
           </h2>
         </div>
+        
+        {/* Form */}
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
           <div className="rounded-md shadow-sm -space-y-px">
+            {/* Name Input */}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <input
                 type="text"
@@ -76,6 +90,8 @@ const ApplicationForm = () => {
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
               />
             </motion.div>
+            
+            {/* Phone Input */}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <input
                 type="text"
@@ -86,6 +102,8 @@ const ApplicationForm = () => {
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
               />
             </motion.div>
+
+            {/* Email Input */}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <input
                 type="email"
@@ -96,6 +114,8 @@ const ApplicationForm = () => {
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
               />
             </motion.div>
+
+            {/* Statement Input */}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <textarea
                 name="statement"
@@ -108,6 +128,7 @@ const ApplicationForm = () => {
             </motion.div>
           </div>
 
+          {/* Display errors if any */}
           {Object.keys(errors).length > 0 && (
             <div className="text-red-500 text-sm">
               {Object.values(errors).map((error, index) => (
@@ -116,6 +137,7 @@ const ApplicationForm = () => {
             </div>
           )}
 
+          {/* Submit Button */}
           <div>
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -130,6 +152,7 @@ const ApplicationForm = () => {
         </form>
       </div>
 
+      {/* Popup to show submission success */}
       <AnimatePresence>
         {showPopup && (
           <motion.div

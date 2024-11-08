@@ -1,30 +1,49 @@
+/* Importing Tailwind CSS utilities */
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
+/* Global Styles */
 body {
+  /* Reset margin to remove default spacing */
   margin: 0;
+
+  /* Set font family for the body */
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+
+  /* Smooth font rendering for better display on different platforms */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* Set background color for the body */
   background-color: #111827;
+
+  /* Set text color to white */
   color: #ffffff;
 }
 
+/* Code styling */
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  /* Set a monospace font for displaying code */
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
+/* Custom Gradient Background Class */
 .bg-gradient {
+  /* Apply a linear gradient background from blue to purple */
   background: linear-gradient(45deg, #3b82f6, #8b5cf6);
 }
 
+/* Custom Gradient Text Class */
 .text-gradient {
+  /* Make the background visible on text, creating a gradient text effect */
   background-clip: text;
   -webkit-background-clip: text;
+
+  /* Make text color transparent to show the background gradient */
   color: transparent;
+
+  /* Apply the gradient color */
   background-image: linear-gradient(45deg, #3b82f6, #8b5cf6);
 }
