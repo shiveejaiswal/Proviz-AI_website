@@ -68,7 +68,7 @@ const MainSection = () => {
       {/* Background Image */}
       <div 
         className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: 'url(/assets/bg.jpg)' }}
+        style={{ backgroundImage: 'url(/assets/bg.jpeg)' }}
       />
       <div className="relative z-10">
         {/* Parallax Section */}
