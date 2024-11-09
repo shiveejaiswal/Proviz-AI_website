@@ -1,9 +1,10 @@
 // Import necessary modules
-const express = require('express');           // Express for routing and middleware
-const cors = require('cors');               // CORS middleware for cross-origin requests
-const bodyParser = require('body-parser');  // Body parser middleware to parse incoming requests
-const mongoose = require('mongoose');       // Mongoose to interact with MongoDB
-require('dotenv').config();                 // Load environment variables from .env file
+const express = require('express');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const nodemailer = require('nodemailer');  // Add Nodemailer for email functionality
+require('dotenv').config();
 
 // Initialize the express app
 const app = express();
@@ -18,57 +19,89 @@ mongoose.connect(process.env.MONGODB_URI, {
 
 // Define the schema for the Application model
 const applicationSchema = new mongoose.Schema({
-  name: { type: String, required: true },       // Name of the applicant
-  phone: { type: String, required: true },      // Phone number of the applicant
-  email: { type: String, required: true },      // Email address of the applicant
-  statement: { type: String, required: true }   // Statement or message from the applicant
+  name: { type: String, required: true },
+  phone: { type: String, required: true },
+  email: { type: String, required: true },
+  statement: { type: String, required: true }
 });
 
 // Create a model for applications based on the schema
 const Application = mongoose.model('Application', applicationSchema);
 
 // Middleware setup
-// CORS configuration: Allow frontend requests from a specific domain
 app.use(cors({
-  origin: 'http://localhost:3000',  // Allow only requests from this domain
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],  // Supported HTTP methods
-  allowedHeaders: ['Content-Type'],  // Allowed headers for requests
+  origin: 'http://localhost:3000',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type'],
 }));
 
-// Parse incoming requests with JSON payloads
 app.use(bodyParser.json());
+
+// Nodemailer transporter setup
+const transporter = nodemailer.createTransport({
+  service: 'gmail',  // Assuming you're using Gmail. Adjust if using a different service.
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
+});
+
+// Function to send email
+async function sendEmail(application) {
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: process.env.ADMIN_EMAIL,
+    subject: 'New Application Submitted',
+    text: `
+      A new application has been submitted:
+      
+      Name: ${application.name}
+      Phone: ${application.phone}
+      Email: ${application.email}
+      Statement: ${application.statement}
+    `
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log('Email sent successfully');
+  } catch (error) {
+    console.error('Error sending email:', error);
+  }
+}
 
 // Route to handle form submissions from users (POST request)
 app.post('/api/apply', async (req, res) => {
-  const application = new Application(req.body); // Create new application document from the request body
+  const application = new Application(req.body);
   try {
-    await application.save(); // Save the application to the database
-    res.status(200).json({ message: 'Application submitted successfully!' }); // Respond with success message
+    await application.save();
+    await sendEmail(application);  // Send email notification
+    res.status(200).json({ message: 'Application submitted successfully!' });
   } catch (error) {
-    console.error(error); // Log error for debugging
-    res.status(500).json({ message: 'Error saving application.' }); // Respond with error message
+    console.error(error);
+    res.status(500).json({ message: 'Error saving application.' });
   }
 });
 
 // Route to retrieve all applications (for Admin Dashboard - GET request)
 app.get('/api/applications', async (req, res) => {
   try {
-    const applications = await Application.find(); // Fetch all applications from the database
-    console.log('Fetched applications:', applications); // Log the applications for debugging
-    res.status(200).json(applications); // Respond with the list of applications
+    const applications = await Application.find();
+    console.log('Fetched applications:', applications);
+    res.status(200).json(applications);
   } catch (error) {
-    console.error(error); // Log error for debugging
-    res.status(500).json({ message: 'Error fetching applications.' }); // Respond with error message
+    console.error(error);
+    res.status(500).json({ message: 'Error fetching applications.' });
   }
 });
 
-// Handle OPTIONS request for preflight CORS checks (useful for browsers with CORS)
+// Handle OPTIONS request for preflight CORS checks
 app.options('/api/apply', (req, res) => {
-  res.sendStatus(204); // Respond with no content
+  res.sendStatus(204);
 });
 
 // Start the server on a specific port
-const port = process.env.PORT || 5000;  // Use environment variable PORT or default to 5000
+const port = process.env.PORT || 5000;
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`); // Log the server URL
+  console.log(`Server is running on http://localhost:${port}`);
 });
