@@ -4,7 +4,6 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { Parallax } from 'react-parallax';
 import { useInView } from 'react-intersection-observer';
 import gsap from 'gsap';
-import { ChevronRight, Users, Trophy, BookOpen } from 'lucide-react';
 
 // Reusable ProgramCard component
 const ProgramCard = ({ title, duration, description, image, index }) => (
@@ -41,7 +40,7 @@ const TestimonialCard = ({ name, role, quote, image, index }) => (
 const MainSection = () => {
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 500], [0, -150]);
-  const [ref, inView] = useInView({
+  const [inViewRef, inView] = useInView({
     threshold: 0.1,
     triggerOnce: true,
   });
@@ -188,37 +187,6 @@ const MainSection = () => {
                     },
                   ].map((item, index) => (
                     <ProgramCard key={index} {...item} index={index} />
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Testimonials Section */}
-            <div className="bg-gray-900 py-16">
-              <div className="container mx-auto text-center text-white">
-                <h2 className="text-4xl font-semibold mb-12">What Our Students Say</h2>
-                <div className="grid md:grid-cols-3 gap-8 px-6">
-                  {[ 
-                    {
-                      name: 'John Doe',
-                      role: 'Software Engineer',
-                      quote: 'Proviz School of AI provided me with the knowledge and skills needed to excel in the AI industry. The hands-on experience was invaluable!',
-                      image: '/assets/john.jpg'
-                    },
-                    {
-                      name: 'Jane Smith',
-                      role: 'Data Scientist',
-                      quote: 'The faculty at Proviz are top-notch! I learned from industry leaders who truly care about student success.',
-                      image: '/assets/jane.jpg'
-                    },
-                    {
-                      name: 'Alice Johnson',
-                      role: 'AI Researcher',
-                      quote: 'I\'ve never encountered a more comprehensive AI program. Proviz sets you up for success from day one.',
-                      image: '/assets/alice.jpg'
-                    },
-                  ].map((testimonial, index) => (
-                    <TestimonialCard key={index} {...testimonial} index={index} />
                   ))}
                 </div>
               </div>
