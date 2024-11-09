@@ -38,14 +38,20 @@ const TestimonialCard = ({ name, role, quote, image, index }) => (
 );
 
 const MainSection = () => {
+  // Set up scroll-based animation
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 500], [0, -150]);
+
+  // Set up intersection observer for fade-in effect
   const [inViewRef, inView] = useInView({
     threshold: 0.1,
     triggerOnce: true,
   });
+
+  // Create a ref for the parallax section
   const parallaxRef = useRef(null);
 
+  // Apply GSAP animation when the parallax section comes into view
   useEffect(() => {
     if (inView) {
       gsap.to(parallaxRef.current, {
@@ -68,6 +74,7 @@ const MainSection = () => {
         {/* Parallax Section */}
         <Parallax bgImage="/assets/futuristic-bg.jpg" strength={500}>
           <section className="relative w-full bg-black bg-opacity-60 text-white overflow-hidden">
+            {/* Animated background */}
             <motion.div
               className="absolute inset-0 z-0"
               style={{
@@ -76,6 +83,7 @@ const MainSection = () => {
                 y,
               }}
             />
+            {/* Hero Section */}
             <div className="relative z-10 flex flex-col items-center justify-center min-h-screen text-center space-y-8 px-6">
               {/* Main Title */}
               <motion.h1
@@ -111,9 +119,13 @@ const MainSection = () => {
               </motion.div>
             </div>
 
-            {/* Section for "Why Choose Proviz?" */}
+            {/* "Why Choose Proviz?" Section */}
             <motion.div
-              ref={parallaxRef}
+              ref={(el) => {
+                // Combine the parallaxRef and inViewRef
+                parallaxRef.current = el;
+                inViewRef(el);
+              }}
               initial={{ opacity: 0, y: 100 }}
               className="bg-gray-900 bg-opacity-90 py-16"
             >
@@ -187,6 +199,37 @@ const MainSection = () => {
                     },
                   ].map((item, index) => (
                     <ProgramCard key={index} {...item} index={index} />
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Testimonials Section */}
+            <div className="bg-gray-900 py-16">
+              <div className="container mx-auto text-center text-white">
+                <h2 className="text-4xl font-semibold mb-12">What Our Students Say</h2>
+                <div className="grid md:grid-cols-3 gap-8 px-6">
+                  {[ 
+                    {
+                      name: 'John Doe',
+                      role: 'Software Engineer',
+                      quote: 'Proviz School of AI provided me with the knowledge and skills needed to excel in the AI industry. The hands-on experience was invaluable!',
+                      image: '/assets/testimonial2.jpg'
+                    },
+                    {
+                      name: 'Jane Smith',
+                      role: 'Data Scientist',
+                      quote: 'The faculty at Proviz are top-notch! I learned from industry leaders who truly care about student success.',
+                      image: '/assets/testimonial3.jpg'
+                    },
+                    {
+                      name: 'Alice Johnson',
+                      role: 'AI Researcher',
+                      quote: 'I\'ve never encountered a more comprehensive AI program. Proviz sets you up for success from day one.',
+                      image: '/assets/testimonial1.jpg'
+                    },
+                  ].map((testimonial, index) => (
+                    <TestimonialCard key={index} {...testimonial} index={index} />
                   ))}
                 </div>
               </div>
