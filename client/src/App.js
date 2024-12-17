@@ -7,11 +7,7 @@ import MainSection from './components/MainSection';
 import ApplicationForm from './components/ApplicationForm';
 import AdminDashboard from './components/AdminDashboard';
 
-/**
- * ErrorBoundary Component:
- * A wrapper that catches JavaScript errors anywhere in the child component tree.
- * Displays a fallback UI if an error occurs.
- */
+
 class ErrorBoundary extends Component {
   constructor(props) {
     super(props);

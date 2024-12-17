@@ -83,17 +83,35 @@ app.post('/api/apply', async (req, res) => {
   }
 });
 
-// Route to retrieve all applications (for Admin Dashboard - GET request)
-app.get('/api/applications', async (req, res) => {
+app.post('/api/apply', async (req, res) => {
+  console.log('Request body:', req.body);  // Log incoming request data
+
+  // Validation check (if needed)
+  // (Add any validation logic here before proceeding with saving)
+
+  const application = new Application(req.body);
+
   try {
-    const applications = await Application.find();
-    console.log('Fetched applications:', applications);
-    res.status(200).json(applications);
+    // Attempt to save the application data to the database
+    await application.save();
+
+    // Send email notification
+    try {
+      await sendEmail(application); // Send email notification
+    } catch (emailError) {
+      console.error('Error sending email:', emailError); // Log email error
+      return res.status(500).json({ message: 'Application saved, but email failed.', error: emailError.message });
+    }
+
+    // If both operations succeed
+    res.status(200).json({ message: 'Application submitted successfully!' });
+
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error fetching applications.' });
+    console.error('Error saving application to DB:', error); // Log DB save error
+    res.status(500).json({ message: 'Error saving application.', error: error.message });
   }
 });
+
 
 // Handle OPTIONS request for preflight CORS checks
 app.options('/api/apply', (req, res) => {
